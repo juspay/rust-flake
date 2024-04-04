@@ -30,7 +30,6 @@ in
             default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
           };
 
-
           rust-project.toolchain = lib.mkOption {
             type = lib.types.package;
             description = "Rust toolchain to use for the rust-project package";
@@ -61,7 +60,7 @@ in
             inherit (cargoToml.package) name version;
             inherit (config.rust-project) toolchain crane src;
 
-            # Crane builder for Dioxus projects projects
+            # Crane builder
             craneBuild = rec {
               args = {
                 inherit src;
