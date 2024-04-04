@@ -8,6 +8,9 @@
     crane.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { rust-overlay, crane, ... }: {
-    flakeModules.default = import ./flake-module.nix { inherit rust-overlay crane; };
+    flakeModules = {
+      default = import ./nix/modules/flake-module.nix { inherit rust-overlay crane; };
+      nixpkgs = import ./nix/modules/nixpkgs.nix;
+    };
   };
 }

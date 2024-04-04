@@ -102,7 +102,7 @@ in
             };
           in
           {
-            # Requires https://github.com/hercules-ci/flake-parts/issues/74#issuecomment-1513708722
+            # See nix/modules/nixpkgs.nix (the user must import it)
             nixpkgs.overlays = [
               inputs.rust-overlay.overlays.default
             ];
