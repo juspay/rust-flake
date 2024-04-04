@@ -102,6 +102,11 @@ in
             };
           in
           {
+            # Requires https://github.com/hercules-ci/flake-parts/issues/74#issuecomment-1513708722
+            nixpkgs.overlays = [
+              inputs.rust-overlay.overlays.default
+            ];
+
             # Rust package
             packages.${name} = craneBuild.package;
             packages."${name}-doc" = craneBuild.doc;
