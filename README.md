@@ -8,3 +8,8 @@ WIP: Like the famous `haskell-flake`, but for Rust.
 - [ ] Multi-crate workspaces
 - [ ] Multiple projects
 - [ ] Examples & tests
+
+## Examples
+
+- https://github.com/srid/rust-nix-template
+- https://github.com/juspay/nix-rs
