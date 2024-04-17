@@ -1,6 +1,6 @@
 # rust-flake
 
-WIP: Like the famous `haskell-flake`, but for Rust.
+WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.dev/) underneath.
 
 ## Progress
 
