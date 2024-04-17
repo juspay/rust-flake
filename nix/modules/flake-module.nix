@@ -109,7 +109,7 @@ in
               ] ++ config.rust-project.crane.args.buildInputs;
               packages = [
                 toolchain
-              ];
+              ] ++ config.rust-project.crane.args.nativeBuildInputs;
             };
           in
           {
