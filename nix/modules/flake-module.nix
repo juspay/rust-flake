@@ -9,6 +9,19 @@ in
   options = {
     perSystem = mkPerSystemOption
       ({ config, self', pkgs, system, ... }: {
+        imports = [
+          {
+            options.rust-project.crane.args = lib.mkOption {
+              default = { };
+              type = lib.types.submodule {
+                freeformType = lib.types.attrsOf lib.types.raw;
+              };
+              description = ''
+                Aguments to pass to crane's `buildPackage` and `buildDepOnly`
+              '';
+            };
+          }
+        ];
         options = {
           # TODO: Multiple projects
           # TODO: Workspace crates
@@ -62,9 +75,8 @@ in
 
             # Crane builder
             craneBuild = rec {
-              args = {
+              args = crane.args // {
                 inherit src;
-                inherit (crane.args) buildInputs nativeBuildInputs;
                 pname = name;
                 version = version;
                 # glib-sys fails to build on linux without this
