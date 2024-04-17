@@ -12,5 +12,14 @@
       default = import ./nix/modules/flake-module.nix { inherit rust-overlay crane; };
       nixpkgs = import ./nix/modules/nixpkgs.nix;
     };
+    nixci.default =
+      let
+        overrideInputs = {
+          rust-flake = ./.;
+        };
+      in
+      {
+        dev = { inherit overrideInputs; dir = "dev"; };
+      };
   };
 }
