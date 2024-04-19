@@ -66,12 +66,19 @@ in
               ;
             };
           };
+
+          rust-project.cargoToml = lib.mkOption {
+            type = lib.types.attrsOf lib.types.raw;
+            description = ''
+              Cargo.toml parsed in Nix
+            '';
+            default = builtins.fromTOML (builtins.readFile (self + /Cargo.toml));
+          };
         };
         config =
           let
-            cargoToml = builtins.fromTOML (builtins.readFile (self + /Cargo.toml));
             inherit (cargoToml.package) name version;
-            inherit (config.rust-project) toolchain crane src;
+            inherit (config.rust-project) toolchain crane src cargoToml;
 
             # Crane builder
             craneBuild = rec {
