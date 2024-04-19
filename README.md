@@ -13,6 +13,9 @@ WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.
 
 - https://github.com/srid/rust-nix-template
 - https://github.com/juspay/nix-rs
+- Desktop apps
+    - https://github.com/srid/dioxus-desktop-template
+    - https://github.com/juspay/nix-browser
 
 ## Comparison with other tools
 
