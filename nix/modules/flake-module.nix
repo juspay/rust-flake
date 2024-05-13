@@ -38,6 +38,11 @@ in
             ];
             description = "nativeBuildInputs for the cargo package";
           };
+          rust-project.crane.extraBuildArgs = lib.mkOption {
+            type = lib.types.lazyAttrsOf lib.types.raw;
+            default = { };
+            description = "Extra arguments to pass to crane's buildPackage function";
+          };
           rust-project.crane.lib = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.raw;
             default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
@@ -93,7 +98,7 @@ in
               cargoArtifacts = crane.lib.buildDepsOnly args;
               buildArgs = args // {
                 inherit cargoArtifacts;
-              };
+              } // crane.extraBuildArgs;
               package = crane.lib.buildPackage buildArgs;
 
               check = crane.lib.cargoClippy (args // {
