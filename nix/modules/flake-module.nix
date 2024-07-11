@@ -25,13 +25,13 @@ in
         options = {
           # TODO: Multiple projects
           rust-project.crane.args.pname = lib.mkOption {
-            type = lib.types.string;
+            type = lib.types.str;
             description = "Name of the Rust crate to build";
             default = config.rust-project.cargoToml.package.name;
             defaultText = "Cargo.toml package name";
           };
           rust-project.crane.args.version = lib.mkOption {
-            type = lib.types.string;
+            type = lib.types.str;
             description = "Version of the Rust crate to build";
             default = config.rust-project.cargoToml.package.version;
             defaultText = "Cargo.toml package version";
