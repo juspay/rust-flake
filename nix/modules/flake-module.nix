@@ -58,6 +58,7 @@ in
             type = lib.types.lazyAttrsOf lib.types.raw;
             default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
           };
+          rust-project.crane.clippy.enable = lib.mkEnableOption "Add flake check for cargo clippy" // { default = true; };
 
           rust-project.toolchain = lib.mkOption {
             type = lib.types.package;
@@ -82,6 +83,7 @@ in
               ;
             };
           };
+
 
           rust-project.cargoToml = lib.mkOption {
             type = lib.types.attrsOf lib.types.raw;
@@ -142,7 +144,9 @@ in
             packages.${crane.args.pname} = craneBuild.package;
             packages."${crane.args.pname}-doc" = craneBuild.doc;
 
-            checks."${crane.args.pname}-clippy" = craneBuild.check;
+            checks = lib.mkIf crane.clippy.enable {
+              "${crane.args.pname}-clippy" = craneBuild.check;
+            };
 
             # Rust dev environment
             devShells.${crane.args.pname} = pkgs.mkShell {
