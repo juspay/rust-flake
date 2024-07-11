@@ -24,7 +24,18 @@ in
         ];
         options = {
           # TODO: Multiple projects
-          # TODO: Workspace crates
+          rust-project.crane.args.pname = lib.mkOption {
+            type = lib.types.string;
+            description = "Name of the Rust crate to build";
+            default = config.rust-project.cargoToml.package.name;
+            defaultText = "Cargo.toml package name";
+          };
+          rust-project.crane.args.version = lib.mkOption {
+            type = lib.types.string;
+            description = "Version of the Rust crate to build";
+            default = config.rust-project.cargoToml.package.version;
+            defaultText = "Cargo.toml package version";
+          };
           rust-project.crane.args.buildInputs = lib.mkOption {
             type = lib.types.listOf lib.types.package;
             default = [ ];
@@ -82,15 +93,12 @@ in
         };
         config =
           let
-            inherit (cargoToml.package) name version;
             inherit (config.rust-project) toolchain crane src cargoToml;
 
             # Crane builder
             craneBuild = rec {
               args = crane.args // {
                 inherit src;
-                pname = name;
-                version = version;
                 # glib-sys fails to build on linux without this
                 # cf. https://github.com/ipetkov/crane/issues/411#issuecomment-1747533532
                 strictDeps = true;
@@ -131,13 +139,13 @@ in
             ];
 
             # Rust package
-            packages.${name} = craneBuild.package;
-            packages."${name}-doc" = craneBuild.doc;
+            packages.${crane.args.pname} = craneBuild.package;
+            packages."${crane.args.pname}-doc" = craneBuild.doc;
 
-            checks."${name}-clippy" = craneBuild.check;
+            checks."${crane.args.pname}-clippy" = craneBuild.check;
 
             # Rust dev environment
-            devShells.${name} = pkgs.mkShell {
+            devShells.${crane.args.pname} = pkgs.mkShell {
               inputsFrom = [
                 rustDevShell
               ];
