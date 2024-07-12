@@ -190,10 +190,10 @@ in
               '';
               buildInputs = [
                 pkgs.libiconv
-              ] ++ crane.args.buildInputs;
+              ] ++ lib.mapAttrsToList (_: crate: crate.crane.args.buildInputs) config.rust-project.crates;
               packages = [
                 toolchain
-              ] ++ crane.args.nativeBuildInputs;
+              ] ++ lib.mapAttrsToList (_: crate: crate.crane.args.nativeBuildInputs) config.rust-project.crates;
             };
           in
           {
