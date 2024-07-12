@@ -102,6 +102,7 @@ in
                           args = crane.args // {
                             inherit src version;
                             pname = name;
+                            cargoExtraArgs = "-p ${name}";
                             # glib-sys fails to build on linux without this
                             # cf. https://github.com/ipetkov/crane/issues/411#issuecomment-1747533532
                             strictDeps = true;

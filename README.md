@@ -5,7 +5,7 @@ WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.
 ## Progress
 
 - [x] Simple module that works with single-crate projects
-- [ ] Multi-crate workspaces
+- [x] Multi-crate workspaces
 - [ ] Multiple projects
 - [ ] Examples & tests
 
@@ -15,7 +15,7 @@ WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.
 - https://github.com/juspay/nix-rs
 - Desktop apps
     - https://github.com/srid/dioxus-desktop-template
-    - https://github.com/juspay/nix-browser
+    - https://github.com/juspay/omnix
 
 ## Comparison with other tools
 
