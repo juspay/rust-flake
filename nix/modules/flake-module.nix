@@ -10,6 +10,7 @@ in
     perSystem = mkPerSystemOption
       (top@{ config, self', pkgs, system, ... }: {
         imports = [
+          # TODO!
           {
             options.rust-project.crane.args = lib.mkOption {
               default = { };
@@ -20,6 +21,34 @@ in
                 Aguments to pass to crane's `buildPackage` and `buildDepOnly`
               '';
             };
+          }
+          {
+            rust-project.crates =
+              let
+                inherit (config.rust-project) cargoToml;
+              in
+              if lib.hasAttr "workspace" (builtins.trace (builtins.toJSON cargoToml.workspace.members) cargoToml)
+              then
+              # FIXME: this requires impure
+                lib.foldl'
+                  (acc: pathString:
+                    let
+                      path = self + "/${pathString}";
+                      # Get name from last path component of pathString (split by '/', then taken last)
+                      # name = lib.lists.last (lib.strings.splitString "/" pathString);
+                      cargoPath = builtins.toPath (path + "/Cargo.toml");
+                      cargoToml = builtins.fromTOML (builtins.readFile cargoPath);
+                      name = cargoToml.package.name;
+                    in
+                    acc // { ${name} = { path = lib.mkDefault path; }; }
+                  )
+                  { }
+                  cargoToml.workspace.members
+              else {
+                ${cargoToml.package.name} = {
+                  path = self;
+                };
+              };
           }
         ];
         options = {
@@ -112,19 +141,6 @@ in
                   };
                 };
               }));
-              default =
-                let
-                  inherit (config.rust-project) cargoToml;
-                in
-                if lib.hasAttr "workspace" cargoToml
-                then
-                # Convert workspace.members list of crate names to a map of crate names to paths
-                  lib.foldl' (name: path: acc: acc // { ${name} = { path = path; }; }) { } cargoToml.workspace.members
-                else {
-                  ${cargoToml.packaage.name} = {
-                    path = self;
-                  };
-                };
             };
 
             crane-lib = lib.mkOption {
