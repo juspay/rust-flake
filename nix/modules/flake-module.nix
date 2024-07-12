@@ -24,73 +24,78 @@ in
         ];
         options = {
           # TODO: Multiple projects
-          rust-project.crane.args.pname = lib.mkOption {
-            type = lib.types.str;
-            description = "Name of the Rust crate to build";
-            default = config.rust-project.cargoToml.package.name;
-            defaultText = "Cargo.toml package name";
-          };
-          rust-project.crane.args.version = lib.mkOption {
-            type = lib.types.str;
-            description = "Version of the Rust crate to build";
-            default = config.rust-project.cargoToml.package.version;
-            defaultText = "Cargo.toml package version";
-          };
-          rust-project.crane.args.buildInputs = lib.mkOption {
-            type = lib.types.listOf lib.types.package;
-            default = [ ];
-            description = "(Runtime) buildInputs for the cargo package";
-          };
-          rust-project.crane.args.nativeBuildInputs = lib.mkOption {
-            type = lib.types.listOf lib.types.package;
-            default = with pkgs; [
-              pkg-config
-              makeWrapper
-            ];
-            description = "nativeBuildInputs for the cargo package";
-          };
-          rust-project.crane.extraBuildArgs = lib.mkOption {
-            type = lib.types.lazyAttrsOf lib.types.raw;
-            default = { };
-            description = "Extra arguments to pass to crane's buildPackage function";
-          };
-          rust-project.crane.lib = lib.mkOption {
-            type = lib.types.lazyAttrsOf lib.types.raw;
-            default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
-          };
-          rust-project.crane.clippy.enable = lib.mkEnableOption "Add flake check for cargo clippy" // { default = true; };
-
-          rust-project.toolchain = lib.mkOption {
-            type = lib.types.package;
-            description = "Rust toolchain to use for the rust-project package";
-            default = (pkgs.rust-bin.fromRustupToolchainFile (self + /rust-toolchain.toml)).override {
-              extensions = [
-                "rust-src"
-                "rust-analyzer"
-                "clippy"
-              ];
+          rust-project = {
+            crane = {
+              args = {
+                pname = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Name of the Rust crate to build";
+                  default = config.rust-project.cargoToml.package.name;
+                  defaultText = "Cargo.toml package name";
+                };
+                version = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Version of the Rust crate to build";
+                  default = config.rust-project.cargoToml.package.version;
+                  defaultText = "Cargo.toml package version";
+                };
+                buildInputs = lib.mkOption {
+                  type = lib.types.listOf lib.types.package;
+                  default = [ ];
+                  description = "(Runtime) buildInputs for the cargo package";
+                };
+                nativeBuildInputs = lib.mkOption {
+                  type = lib.types.listOf lib.types.package;
+                  default = with pkgs; [
+                    pkg-config
+                    makeWrapper
+                  ];
+                  description = "nativeBuildInputs for the cargo package";
+                };
+              };
+              extraBuildArgs = lib.mkOption {
+                type = lib.types.lazyAttrsOf lib.types.raw;
+                default = { };
+                description = "Extra arguments to pass to crane's buildPackage function";
+              };
+              lib = lib.mkOption {
+                type = lib.types.lazyAttrsOf lib.types.raw;
+                default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
+              };
+              clippy.enable = lib.mkEnableOption "Add flake check for cargo clippy" // { default = true; };
             };
-          };
 
-          rust-project.src = lib.mkOption {
-            type = lib.types.path;
-            description = "Source directory for the rust-project package";
-            default = lib.cleanSourceWith {
-              src = self; # The original, unfiltered source
-              filter = path: type:
-                # Default filter from crane (allow .rs files)
-                (config.rust-project.crane.lib.filterCargoSources path type)
-              ;
+            toolchain = lib.mkOption {
+              type = lib.types.package;
+              description = "Rust toolchain to use for the rust-project package";
+              default = (pkgs.rust-bin.fromRustupToolchainFile (self + /rust-toolchain.toml)).override {
+                extensions = [
+                  "rust-src"
+                  "rust-analyzer"
+                  "clippy"
+                ];
+              };
             };
-          };
 
+            src = lib.mkOption {
+              type = lib.types.path;
+              description = "Source directory for the rust-project package";
+              default = lib.cleanSourceWith {
+                src = self; # The original, unfiltered source
+                filter = path: type:
+                  # Default filter from crane (allow .rs files)
+                  (config.rust-project.crane.lib.filterCargoSources path type)
+                ;
+              };
+            };
 
-          rust-project.cargoToml = lib.mkOption {
-            type = lib.types.attrsOf lib.types.raw;
-            description = ''
-              Cargo.toml parsed in Nix
-            '';
-            default = builtins.fromTOML (builtins.readFile (self + /Cargo.toml));
+            cargoToml = lib.mkOption {
+              type = lib.types.attrsOf lib.types.raw;
+              description = ''
+                Cargo.toml parsed in Nix
+              '';
+              default = builtins.fromTOML (builtins.readFile (self + /Cargo.toml));
+            };
           };
         };
         config =
