@@ -89,7 +89,7 @@
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.mkIf crane.clippy.enable {
+            default = lib.optionalAttrs crane.clippy.enable {
               "${name}-clippy" = craneBuild.check;
             };
           };
