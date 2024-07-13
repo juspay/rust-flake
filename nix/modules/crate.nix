@@ -124,7 +124,7 @@
 
           packages = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = {
+            default = lib.optionalAttrs config.autoWire {
               ${name} = config.crane.outputs.drv.crate;
               "${name}-doc" = config.crane.outputs.drv.doc;
             };
@@ -132,7 +132,7 @@
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.optionalAttrs crane.clippy.enable {
+            default = lib.optionalAttrs (config.autoWire && crane.clippy.enable) {
               "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
           };
