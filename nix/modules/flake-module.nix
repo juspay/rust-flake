@@ -73,7 +73,14 @@ in
           # lib.mapAttrs over config.rust-project.crates returning its outputs.packages (combined)
           packages =
             lib.mkMerge
-              (lib.mapAttrsToList (name: crate: crate.crane.outputs.packages) config.rust-project.crates);
+              (lib.mapAttrsToList
+                (name: crate: crate.crane.outputs.packages)
+                config.rust-project.crates);
+
+          checks = lib.mkMerge
+            (lib.mapAttrsToList
+              (name: crate: crate.crane.outputs.checks)
+              config.rust-project.crates);
         };
       });
   };
