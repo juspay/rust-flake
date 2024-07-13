@@ -1,5 +1,5 @@
 inputs:
-{ self, lib, flake-parts-lib, ... }:
+{ self, pkgs, lib, flake-parts-lib, ... }:
 
 let
   inherit (flake-parts-lib)
@@ -10,61 +10,27 @@ in
     perSystem = mkPerSystemOption
       ({ config, self', pkgs, system, ... }: {
         imports = [
-          {
-            options.rust-project.crane.args = lib.mkOption {
-              default = { };
-              type = lib.types.submodule {
-                freeformType = lib.types.attrsOf lib.types.raw;
-              };
-              description = ''
-                Aguments to pass to crane's `buildPackage` and `buildDepOnly`
-              '';
-            };
-          }
+          ./default-crates.nix
+          ./devshell.nix
         ];
         options = {
           # TODO: Multiple projects
           rust-project = {
-            crane = {
-              args = {
-                pname = lib.mkOption {
-                  type = lib.types.str;
-                  description = "Name of the Rust crate to build";
-                  default = config.rust-project.cargoToml.package.name;
-                  defaultText = "Cargo.toml package name";
+            crates = lib.mkOption {
+              description = ''Attrset of crates pointing to the local path, which has its Cargo.toml file'';
+              type = lib.types.attrsOf (lib.types.submoduleWith {
+                modules = [ ./crate.nix ];
+                specialArgs = {
+                  inherit (config) rust-project;
+                  inherit pkgs;
                 };
-                version = lib.mkOption {
-                  type = lib.types.str;
-                  description = "Version of the Rust crate to build";
-                  default = config.rust-project.cargoToml.package.version;
-                  defaultText = "Cargo.toml package version";
-                };
-                buildInputs = lib.mkOption {
-                  type = lib.types.listOf lib.types.package;
-                  default = [ ];
-                  description = "(Runtime) buildInputs for the cargo package";
-                };
-                nativeBuildInputs = lib.mkOption {
-                  type = lib.types.listOf lib.types.package;
-                  default = with pkgs; [
-                    pkg-config
-                    makeWrapper
-                  ];
-                  description = "nativeBuildInputs for the cargo package";
-                };
-              };
-              extraBuildArgs = lib.mkOption {
-                type = lib.types.lazyAttrsOf lib.types.raw;
-                default = { };
-                description = "Extra arguments to pass to crane's buildPackage function";
-              };
-              lib = lib.mkOption {
-                type = lib.types.lazyAttrsOf lib.types.raw;
-                default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
-              };
-              clippy.enable = lib.mkEnableOption "Add flake check for cargo clippy" // { default = true; };
+              });
             };
 
+            crane-lib = lib.mkOption {
+              type = lib.types.lazyAttrsOf lib.types.raw;
+              default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
+            };
             toolchain = lib.mkOption {
               type = lib.types.package;
               description = "Rust toolchain to use for the rust-project package";
@@ -84,7 +50,7 @@ in
                 src = self; # The original, unfiltered source
                 filter = path: type:
                   # Default filter from crane (allow .rs files)
-                  (config.rust-project.crane.lib.filterCargoSources path type)
+                  (config.rust-project.crane-lib.filterCargoSources path type)
                 ;
               };
             };
@@ -98,68 +64,17 @@ in
             };
           };
         };
-        config =
-          let
-            inherit (config.rust-project) toolchain crane src cargoToml;
+        config = {
+          # See nix/modules/nixpkgs.nix (the user must import it)
+          nixpkgs.overlays = [
+            inputs.rust-overlay.overlays.default
+          ];
 
-            # Crane builder
-            craneBuild = rec {
-              args = crane.args // {
-                inherit src;
-                # glib-sys fails to build on linux without this
-                # cf. https://github.com/ipetkov/crane/issues/411#issuecomment-1747533532
-                strictDeps = true;
-              };
-              cargoArtifacts = crane.lib.buildDepsOnly args;
-              buildArgs = args // {
-                inherit cargoArtifacts;
-              } // crane.extraBuildArgs;
-              package = crane.lib.buildPackage buildArgs;
-
-              check = crane.lib.cargoClippy (args // {
-                inherit cargoArtifacts;
-                cargoClippyExtraArgs = "--all-targets --all-features -- --deny warnings";
-              });
-
-              doc = crane.lib.cargoDoc (args // {
-                inherit cargoArtifacts;
-              });
-            };
-
-            rustDevShell = pkgs.mkShell {
-              shellHook = ''
-                # For rust-analyzer 'hover' tooltips to work.
-                export RUST_SRC_PATH="${toolchain}/lib/rustlib/src/rust/library";
-              '';
-              buildInputs = [
-                pkgs.libiconv
-              ] ++ config.rust-project.crane.args.buildInputs;
-              packages = [
-                toolchain
-              ] ++ config.rust-project.crane.args.nativeBuildInputs;
-            };
-          in
-          {
-            # See nix/modules/nixpkgs.nix (the user must import it)
-            nixpkgs.overlays = [
-              inputs.rust-overlay.overlays.default
-            ];
-
-            # Rust package
-            packages.${crane.args.pname} = craneBuild.package;
-            packages."${crane.args.pname}-doc" = craneBuild.doc;
-
-            checks = lib.mkIf crane.clippy.enable {
-              "${crane.args.pname}-clippy" = craneBuild.check;
-            };
-
-            # Rust dev environment
-            devShells.${crane.args.pname} = pkgs.mkShell {
-              inputsFrom = [
-                rustDevShell
-              ];
-            };
-          };
+          # lib.mapAttrs over config.rust-project.crates returning its outputs.packages (combined)
+          packages =
+            lib.mkMerge
+              (lib.mapAttrsToList (name: crate: crate.crane.outputs.packages) config.rust-project.crates);
+        };
       });
   };
 }
