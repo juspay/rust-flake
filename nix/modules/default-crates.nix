@@ -11,10 +11,10 @@
       lib.foldl'
         (acc: pathString:
           let
-            path = src + "/${pathString}";
+            path = "${src}/${pathString}";
             # Get name from last path component of pathString (split by '/', then taken last)
             # name = lib.lists.last (lib.strings.splitString "/" pathString);
-            cargoPath = builtins.toPath (path + "/Cargo.toml");
+            cargoPath = "${src}/${pathString}/Cargo.toml";
             cargoToml = builtins.fromTOML (builtins.readFile cargoPath);
             name = cargoToml.package.name;
           in

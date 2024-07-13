@@ -18,7 +18,7 @@
     };
     cargoToml = lib.mkOption {
       type = lib.types.attrsOf lib.types.raw;
-      default = builtins.fromTOML (builtins.readFile (config.path + /Cargo.toml));
+      default = builtins.fromTOML (builtins.readFile ("${config.path}/Cargo.toml"));
     };
     crane = {
       args = {
