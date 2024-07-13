@@ -1,5 +1,5 @@
 inputs:
-{ self, lib, flake-parts-lib, ... }:
+{ self, pkgs, lib, flake-parts-lib, ... }:
 
 let
   inherit (flake-parts-lib)
@@ -20,7 +20,10 @@ in
               description = ''Attrset of crates pointing to the local path, which has its Cargo.toml file'';
               type = lib.types.attrsOf (lib.types.submoduleWith {
                 modules = [ ./crate.nix ];
-                specialArgs = { inherit (config) rust-project; };
+                specialArgs = {
+                  inherit (config) rust-project;
+                  inherit pkgs;
+                };
               });
             };
 

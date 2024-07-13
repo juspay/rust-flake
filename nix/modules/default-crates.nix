@@ -5,7 +5,7 @@
     let
       inherit (config.rust-project) cargoToml src;
     in
-    if lib.hasAttr "workspace" (builtins.trace (builtins.toJSON cargoToml.workspace.members) cargoToml)
+    if lib.hasAttr "workspace" cargoToml
     then
     # FIXME: this requires impure
       lib.foldl'
