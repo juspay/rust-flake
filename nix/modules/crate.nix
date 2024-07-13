@@ -20,6 +20,29 @@
       type = lib.types.attrsOf lib.types.raw;
       default = builtins.fromTOML (builtins.readFile ("${config.path}/Cargo.toml"));
     };
+    hasBinaries = lib.mkOption {
+      type = lib.types.bool;
+      readOnly = true;
+      description = ''
+        Whether the crate has binaries or not.
+
+        See <https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries>
+      '';
+      default =
+        lib.pathIsRegularFile "${config.path}/src/main.rs" ||
+        lib.pathIsDirectory "${config.path}/src/bin" ||
+        lib.hasAttr "bin" config.cargoToml;
+    };
+    autoWire = lib.mkOption {
+      type = lib.types.bool;
+      default = config.hasBinaries;
+      defaultText = "true if the crate has binaries, false otherwise";
+      description = ''
+        Autowire the packages and checks for this crate on to the flake output.
+
+        By default, crates with binaries will have their packages and checks wired.
+      '';
+    };
     crane = {
       args = {
         buildInputs = lib.mkOption {
@@ -53,6 +76,8 @@
           version = cargoToml.package.version;
 
           # Crane builder
+          # NOTE: Is it worth exposing this entire attrset as a readOnly module
+          # option?
           craneBuild = rec {
             args = crane.args // {
               inherit src version;
@@ -79,18 +104,36 @@
           };
         in
         {
+          drv = {
+            crate = lib.mkOption {
+              type = lib.types.package;
+              description = "The Nix package for the Rust crate";
+              default = craneBuild.package;
+            };
+            doc = lib.mkOption {
+              type = lib.types.package;
+              description = "The Nix package for the Rust crate documentation";
+              default = craneBuild.doc;
+            };
+            clippy = lib.mkOption {
+              type = lib.types.package;
+              description = "The Nix package for the Rust crate clippy check";
+              default = craneBuild.check;
+            };
+          };
+
           packages = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = {
-              ${name} = craneBuild.package;
-              "${name}-doc" = craneBuild.doc;
+            default = lib.optionalAttrs config.autoWire {
+              ${name} = config.crane.outputs.drv.crate;
+              "${name}-doc" = config.crane.outputs.drv.doc;
             };
           };
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.optionalAttrs crane.clippy.enable {
-              "${name}-clippy" = craneBuild.check;
+            default = lib.optionalAttrs (config.autoWire && crane.clippy.enable) {
+              "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
           };
         };
