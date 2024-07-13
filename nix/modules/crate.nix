@@ -76,6 +76,8 @@
           version = cargoToml.package.version;
 
           # Crane builder
+          # NOTE: Is it worth exposing this entire attrset as a readOnly module
+          # option?
           craneBuild = rec {
             args = crane.args // {
               inherit src version;
@@ -102,21 +104,39 @@
           };
         in
         {
+          drv = {
+            crate = lib.mkOption {
+              type = lib.types.package;
+              description = "The Nix package for the Rust crate";
+              default = craneBuild.package;
+            };
+            doc = lib.mkOption {
+              type = lib.types.package;
+              description = "The Nix package for the Rust crate documentation";
+              default = craneBuild.doc;
+            };
+            clippy = lib.mkOption {
+              type = lib.types.package;
+              description = "The Nix package for the Rust crate clippy check";
+              default = craneBuild.check;
+            };
+          };
+
           packages = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
             default = {
-              ${name} = craneBuild.package;
-              "${name}-doc" = craneBuild.doc;
+              ${name} = config.crane.outputs.drv.crate;
+              "${name}-doc" = config.crane.outputs.drv.doc;
             };
           };
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
             default = lib.optionalAttrs crane.clippy.enable {
-              "${name}-clippy" = craneBuild.check;
+              "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
           };
         };
-      };
+    };
   };
 }
