@@ -20,6 +20,16 @@
       type = lib.types.attrsOf lib.types.raw;
       default = builtins.fromTOML (builtins.readFile ("${config.path}/Cargo.toml"));
     };
+    autoWire = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Autowire the packages and checks for this crate on to the flake output.
+
+        Generally, not all workspace creates need to be wired, only the ones
+        that the user actually uses need to be.
+      '';
+    };
     crane = {
       args = {
         buildInputs = lib.mkOption {
@@ -94,6 +104,6 @@
             };
           };
         };
-    };
+      };
   };
 }
