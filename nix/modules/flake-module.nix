@@ -8,7 +8,7 @@ in
 {
   options = {
     perSystem = mkPerSystemOption
-      (top@{ config, self', pkgs, system, ... }: {
+      ({ config, self', pkgs, system, ... }: {
         imports = [
           ./default-crates.nix
           ./devshell.nix
