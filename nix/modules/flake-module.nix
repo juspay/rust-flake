@@ -10,18 +10,7 @@ in
     perSystem = mkPerSystemOption
       (top@{ config, self', pkgs, system, ... }: {
         imports = [
-          # TODO!
-          {
-            options.rust-project.crane.args = lib.mkOption {
-              default = { };
-              type = lib.types.submodule {
-                freeformType = lib.types.attrsOf lib.types.raw;
-              };
-              description = ''
-                Aguments to pass to crane's `buildPackage` and `buildDepOnly`
-              '';
-            };
-          }
+
           {
             rust-project.crates =
               let
@@ -57,6 +46,19 @@ in
             crates = lib.mkOption {
               description = ''Attrset of crates pointing to the local path, which has its Cargo.toml file'';
               type = lib.types.attrsOf (lib.types.submodule ({ config, ... }: {
+                imports = [
+                  {
+                    options.crane.args = lib.mkOption {
+                      default = { };
+                      type = lib.types.submodule {
+                        freeformType = lib.types.attrsOf lib.types.raw;
+                      };
+                      description = ''
+                        Aguments to pass to crane's `buildPackage` and `buildDepOnly`
+                      '';
+                    };
+                  }
+                ];
                 options = {
                   path = lib.mkOption {
                     type = lib.types.path;
