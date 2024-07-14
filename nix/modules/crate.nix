@@ -96,10 +96,12 @@
             check = crane-lib.cargoClippy (args // {
               inherit cargoArtifacts;
               cargoClippyExtraArgs = "--all-targets --all-features -- --deny warnings";
+              meta.description = "Clippy check for the ${name} crate";
             });
 
             doc = crane-lib.cargoDoc (args // {
               inherit cargoArtifacts;
+              meta.description = "Rust docs for the ${name} crate";
             });
           };
         in
