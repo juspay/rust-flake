@@ -11,8 +11,11 @@ WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.
 
 ## Examples
 
-- https://github.com/srid/rust-nix-template
-- https://github.com/juspay/nix-rs
+- Single creates
+    - https://github.com/srid/rust-nix-template
+    - https://github.com/juspay/nix-rs
+- Multi-crate workspace
+    - https://github.com/juspay/superposition
 - Desktop apps
     - https://github.com/srid/dioxus-desktop-template
     - https://github.com/juspay/omnix
