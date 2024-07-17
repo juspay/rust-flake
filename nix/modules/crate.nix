@@ -101,6 +101,7 @@
 
             doc = crane-lib.cargoDoc (args // {
               inherit cargoArtifacts;
+              RUSTDOCFLAGS = "-D warnings"; # The doc package should build only without warnings
               meta.description = "Rust docs for the ${name} crate";
             });
           };
