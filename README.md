@@ -1,3 +1,5 @@
+[![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://nixos.zulipchat.com/#narrow/stream/446608-rust-flake)
+
 # rust-flake
 
 WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.dev/) underneath.
