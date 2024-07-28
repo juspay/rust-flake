@@ -7,6 +7,9 @@
 
     in
     pkgs.mkShell {
+      meta.description = ''
+        Rust development environment, created by rust-flake
+      '';
       shellHook = ''
         # For rust-analyzer 'hover' tooltips to work.
         export RUST_SRC_PATH="${toolchain}/lib/rustlib/src/rust/library";
