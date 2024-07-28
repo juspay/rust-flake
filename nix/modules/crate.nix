@@ -74,6 +74,8 @@
 
           name = cargoToml.package.name;
           version = cargoToml.package.version;
+          description = cargoToml.package.description
+            or (builtins.throw "Missing description in ${name}'s Cargo.toml");
 
           # Crane builder
           # NOTE: Is it worth exposing this entire attrset as a readOnly module
@@ -90,6 +92,7 @@
             cargoArtifacts = crane-lib.buildDepsOnly args;
             buildArgs = args // {
               inherit cargoArtifacts;
+              meta.description = description;
             } // crane.extraBuildArgs;
             package = crane-lib.buildPackage buildArgs;
 
