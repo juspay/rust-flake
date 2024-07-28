@@ -12,8 +12,13 @@
       lib.foldl'
         (acc: pathString:
           let
-            path = "${src}/${pathString}";
-            cargoPath = "${src}/${pathString}/Cargo.toml";
+            path =
+              lib.cleanSourceWith {
+                src = "${src}/${pathString}";
+                filter = path: type:
+                  (config.rust-project.crane-lib.filterCargoSources path type);
+              };
+            cargoPath = "${path}/Cargo.toml";
             cargoToml = builtins.fromTOML (builtins.readFile cargoPath);
             name = cargoToml.package.name;
           in
