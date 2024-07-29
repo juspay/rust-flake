@@ -92,20 +92,26 @@
             cargoArtifacts = crane-lib.buildDepsOnly args;
             buildArgs = args // {
               inherit cargoArtifacts;
-              meta.description = description;
+              meta = (args.meta or { }) // {
+                inherit description;
+              };
             } // crane.extraBuildArgs;
             package = crane-lib.buildPackage buildArgs;
 
             check = crane-lib.cargoClippy (args // {
               inherit cargoArtifacts;
               cargoClippyExtraArgs = "--all-targets --all-features -- --deny warnings";
-              meta.description = "Clippy check for the ${name} crate";
+              meta = (args.meta or { }) // {
+                description = "Clippy check for the ${name} crate";
+              };
             });
 
             doc = crane-lib.cargoDoc (args // {
               inherit cargoArtifacts;
               RUSTDOCFLAGS = "-D warnings"; # The doc package should build only without warnings
-              meta.description = "Rust docs for the ${name} crate";
+              meta = (args.meta or { }) // {
+                description = "Rust docs for the ${name} crate";
+              };
             });
           };
         in
