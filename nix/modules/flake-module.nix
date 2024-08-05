@@ -1,5 +1,5 @@
 rustFlakeInputs:
-{ self, pkgs, lib, flake-parts-lib, ... }:
+{ inputs, self, pkgs, lib, flake-parts-lib, ... }:
 
 let
   inherit (flake-parts-lib)
@@ -21,8 +21,9 @@ in
               type = lib.types.attrsOf (lib.types.submoduleWith {
                 modules = [ ./crate.nix ];
                 specialArgs = {
+                  flake = { inherit inputs; };
                   inherit (config) rust-project;
-                  inherit pkgs;
+                  inherit pkgs system;
                 };
               });
             };
@@ -43,12 +44,25 @@ in
               };
             };
 
+            crateNixFile = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              description = ''
+                The Nix file to import automatically if it exists in the
+                crate directory.
+
+                By default, nothing is automagically imported.
+              '';
+              default = null;
+            };
+
             src = lib.mkOption {
               type = lib.types.path;
               description = "Source directory for the rust-project package";
               default = lib.cleanSourceWith {
                 src = self; # The original, unfiltered source
+                # TODO(DRY): Consolidate with that of default-crates.nix
                 filter = path: type:
+                  (config.rust-project.crateNixFile != null && lib.hasSuffix "/${config.rust-project.crateNixFile}" path) ||
                   # Default filter from crane (allow .rs files)
                   (config.rust-project.crane-lib.filterCargoSources path type)
                 ;
