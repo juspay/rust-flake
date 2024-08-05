@@ -1,5 +1,5 @@
-inputs:
 { self, pkgs, lib, flake-parts-lib, ... }:
+rustFlakeInputs:
 
 let
   inherit (flake-parts-lib)
@@ -29,7 +29,7 @@ in
 
             crane-lib = lib.mkOption {
               type = lib.types.lazyAttrsOf lib.types.raw;
-              default = (inputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
+              default = (rustFlakeInputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
             };
             toolchain = lib.mkOption {
               type = lib.types.package;
@@ -67,7 +67,7 @@ in
         config = {
           # See nix/modules/nixpkgs.nix (the user must import it)
           nixpkgs.overlays = [
-            inputs.rust-overlay.overlays.default
+            rustFlakeInputs.rust-overlay.overlays.default
           ];
 
           # lib.mapAttrs over config.rust-project.crates returning its outputs.packages (combined)
