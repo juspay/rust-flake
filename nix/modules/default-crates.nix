@@ -14,6 +14,7 @@
           let
             path =
               lib.cleanSourceWith {
+                name = builtins.baseNameOf pathString;
                 src = "${src}/${pathString}";
                 filter = path: type:
                   (config.rust-project.crane-lib.filterCargoSources path type);
