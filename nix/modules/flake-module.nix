@@ -1,5 +1,5 @@
-{ self, pkgs, lib, flake-parts-lib, ... }:
 rustFlakeInputs:
+{ self, pkgs, lib, flake-parts-lib, ... }:
 
 let
   inherit (flake-parts-lib)
