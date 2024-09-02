@@ -81,7 +81,7 @@ in
         config = {
           # See nix/modules/nixpkgs.nix (the user must import it)
           nixpkgs.overlays = [
-            rustFlakeInputs.rust-overlay.overlays.default
+            (import rustFlakeInputs.rust-overlay)
           ];
 
           # lib.mapAttrs over config.rust-project.crates returning its outputs.packages (combined)
