@@ -8,7 +8,6 @@ WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.
 
 - [x] Simple module that works with single-crate projects
 - [x] Multi-crate workspaces
-- [ ] Multiple projects
 - [ ] Examples & tests
 
 ## Examples
