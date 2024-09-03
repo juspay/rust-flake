@@ -2,13 +2,13 @@
 
 # rust-flake
 
-WIP: Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.dev/) underneath.
+Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.dev/) underneath.
 
 ## Progress
 
 - [x] Simple module that works with single-crate projects
 - [x] Multi-crate workspaces
-- [ ] Examples & tests
+- [ ] Tests
 
 ## Examples
 
