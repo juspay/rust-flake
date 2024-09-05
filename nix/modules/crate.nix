@@ -22,7 +22,7 @@
     };
     autoWire =
       let
-        outputTypes = [ "packages" "checks" ];
+        outputTypes = [ "crate" "doc" "clippy" ];
       in
       lib.mkOption {
         type = lib.types.listOf (lib.types.enum outputTypes);
@@ -130,15 +130,18 @@
 
           packages = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.optionalAttrs (contains "packages" config.autoWire) {
-              ${name} = config.crane.outputs.drv.crate;
-              "${name}-doc" = config.crane.outputs.drv.doc;
-            };
+            default = lib.mergeAttrs
+              (lib.optionalAttrs (contains "crate" config.autoWire) {
+                ${name} = config.crane.outputs.drv.crate;
+              })
+              (lib.optionalAttrs (contains "doc" config.autoWire) {
+                "${name}-doc" = config.crane.outputs.drv.doc;
+              });
           };
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.optionalAttrs (contains "checks" config.autoWire && crane.clippy.enable) {
+            default = lib.optionalAttrs (contains "clippy" config.autoWire && crane.clippy.enable) {
               "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
           };
