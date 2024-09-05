@@ -20,29 +20,21 @@
       type = lib.types.attrsOf lib.types.raw;
       default = builtins.fromTOML (builtins.readFile ("${config.path}/Cargo.toml"));
     };
-    hasBinaries = lib.mkOption {
-      type = lib.types.bool;
-      readOnly = true;
-      description = ''
-        Whether the crate has binaries or not.
+    autoWire =
+      let
+        outputTypes = [ "packages" "checks" ];
+      in
+      lib.mkOption {
+        type = lib.types.listOf (lib.types.enum outputTypes);
+        description = ''
+          List of flake output types to autowire.
 
-        See <https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries>
-      '';
-      default =
-        lib.pathIsRegularFile "${config.path}/src/main.rs" ||
-        lib.pathIsDirectory "${config.path}/src/bin" ||
-        lib.hasAttr "bin" config.cargoToml;
-    };
-    autoWire = lib.mkOption {
-      type = lib.types.bool;
-      default = config.hasBinaries;
-      defaultText = "true if the crate has binaries, false otherwise";
-      description = ''
-        Autowire the packages and checks for this crate on to the flake output.
-
-        By default, crates with binaries will have their packages and checks wired.
-      '';
-    };
+          Using an empty list will disable autowiring entirely,
+          enabling you to manually wire them using
+          `config.rust-project.crates.<name>.crane.outputs`.
+        '';
+        default = outputTypes;
+      };
     crane = {
       args = {
         buildInputs = lib.mkOption {
@@ -114,6 +106,8 @@
               };
             });
           };
+          # Helper function
+          contains = k: vs: lib.any (x: x == k) vs;
         in
         {
           drv = {
@@ -136,7 +130,7 @@
 
           packages = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.optionalAttrs config.autoWire {
+            default = lib.optionalAttrs (contains "packages" config.autoWire) {
               ${name} = config.crane.outputs.drv.crate;
               "${name}-doc" = config.crane.outputs.drv.doc;
             };
@@ -144,7 +138,7 @@
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
-            default = lib.optionalAttrs (config.autoWire && crane.clippy.enable) {
+            default = lib.optionalAttrs (contains "checks" config.autoWire && crane.clippy.enable) {
               "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
           };
