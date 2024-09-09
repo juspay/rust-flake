@@ -48,7 +48,7 @@
       {
         ${cargoToml.package.name} = {
           path = lib.mkDefault src;
-          autoWire = true;
+          autoWire = [ "crate" "clippy" "doc" ];
         };
       };
 }
