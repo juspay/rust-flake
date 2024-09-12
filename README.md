@@ -2,7 +2,7 @@
 
 # rust-flake
 
-Like the famous `haskell-flake`, but for Rust, using [Crane](https://crane.dev/) underneath.
+A simple flake module for Rust development, based on [Crane](https://crane.dev/). `rust-flake` is inspired by [`haskell-flake`](https://github.com/srid/haskell-flake).
 
 ## Progress
 
