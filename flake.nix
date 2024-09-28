@@ -7,10 +7,21 @@
     crane.url = "github:ipetkov/crane";
     crane.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { rust-overlay, crane, ... }: {
+  outputs = { rust-overlay, crane, ... }:
+  let
+    # Preserve name and key of the module file for dedup and error message locations
+    import' =
+      modulePath: staticArg:
+        {
+          key = toString modulePath;
+          _file = toString modulePath;
+          imports = [ (import modulePath staticArg) ];
+        };
+  in
+  {
     flakeModules = {
-      default = import ./nix/modules/flake-module.nix { inherit rust-overlay crane; };
-      nixpkgs = import ./nix/modules/nixpkgs.nix;
+      default = import' ./nix/modules/flake-module.nix { inherit rust-overlay crane; };
+      nixpkgs = ./nix/modules/nixpkgs.nix;
     };
     nixci.default =
       let

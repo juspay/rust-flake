@@ -18,7 +18,10 @@
     };
     cargoToml = lib.mkOption {
       type = lib.types.attrsOf lib.types.raw;
-      default = builtins.fromTOML (builtins.readFile ("${config.path}/Cargo.toml"));
+      default = builtins.fromTOML (builtins.readFile (config.path + "/Cargo.toml"));
+      defaultText = lib.literalExpression ''
+        fromTOML (readFile (path + "/Cargo.toml"))
+      '';
     };
     autoWire =
       let
@@ -48,6 +51,9 @@
             pkg-config
             makeWrapper
           ];
+          defaultText = lib.literalExample ''
+            with pkgs; [ pkg-config makeWrapper ]
+          '';
           description = "nativeBuildInputs for the cargo package";
         };
       };
@@ -113,16 +119,19 @@
               type = lib.types.package;
               description = "The Nix package for the Rust crate";
               default = craneBuild.package;
+              defaultText = lib.literalMD "_computed with crane_";
             };
             doc = lib.mkOption {
               type = lib.types.package;
               description = "The Nix package for the Rust crate documentation";
               default = craneBuild.doc;
+              defaultText = lib.literalMD "_computed with crane_";
             };
             clippy = lib.mkOption {
               type = lib.types.package;
               description = "The Nix package for the Rust crate clippy check";
               default = craneBuild.check;
+              defaultText = lib.literalMD "_computed with crane_";
             };
           };
 
@@ -135,6 +144,15 @@
               (lib.optionalAttrs (lib.elem "doc" config.autoWire) {
                 "${name}-doc" = config.crane.outputs.drv.doc;
               });
+            defaultText = lib.literalMD ''
+              lib.mergeAttrs
+                (optionalAttrs (elem "crate" config.autoWire) {
+                  "''${name}" = config.crane.outputs.drv.crate;
+                })
+                (optionalAttrs (elem "doc" config.autoWire) {
+                  "''${name}-doc" = config.crane.outputs.drv.doc;
+                })
+            '';
           };
 
           checks = lib.mkOption {
@@ -142,6 +160,11 @@
             default = lib.optionalAttrs (lib.elem "clippy" config.autoWire && crane.clippy.enable) {
               "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
+            defaultText = lib.literalExample ''
+              optionalAttrs (elem "clippy" config.autoWire && crane.clippy.enable) {
+                "''${name}-clippy" = config.crane.outputs.drv.clippy;
+              }
+            '';
           };
         };
     };

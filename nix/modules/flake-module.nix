@@ -31,6 +31,7 @@ in
             crane-lib = lib.mkOption {
               type = lib.types.lazyAttrsOf lib.types.raw;
               default = (rustFlakeInputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
+              defaultText = lib.literalExpression "computed from `rust-flake.inputs.crane` and [`perSystem.rust-project.toolchain`](#opt-perSystem.rust-project.toolchain)";
             };
             toolchain = lib.mkOption {
               type = lib.types.package;
@@ -42,6 +43,9 @@ in
                   "clippy"
                 ];
               };
+              defaultText = lib.literalMD ''
+                Based on the `rust-toolchain.toml` file in the flake directory
+              '';
             };
 
             crateNixFile = lib.mkOption {
@@ -67,6 +71,9 @@ in
                   (config.rust-project.crane-lib.filterCargoSources path type)
                 ;
               };
+              defaultText = lib.literalMD ''
+                Files in this flake (`self`) filtered by crane
+              '';
             };
 
             cargoToml = lib.mkOption {
@@ -75,6 +82,9 @@ in
                 Cargo.toml parsed in Nix
               '';
               default = builtins.fromTOML (builtins.readFile (self + /Cargo.toml));
+              defaultText = lib.literalExpression ''
+                fromTOML (readFile (self + "/Cargo.toml"))
+              '';
             };
           };
         };
