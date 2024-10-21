@@ -28,4 +28,4 @@ A simple flake module for Rust development, based on [Crane](https://crane.dev/)
 | --- | --- | --- |
 | Stable over time | ✔️ | ✖️[^crane] |
 
-[^crane]: `rust-flake` uses [crane](https://crane.dev/) directly, which is known to be stable. Whereas `nix-cargo-integration` uses `dream2nix` which is know to be unstable. See [here](https://matrix.to/#/!gcrYWdPsIUOFpXFDHB:matrix.org/$vJGlKFLKj4uRp-QkokK_0ISnnXHaXQ5tv7A_PcDYl7A?via=matrix.org&via=nixos.dev&via=goblin.sh) and [here](https://github.com/srid/rust-nix-template/pull/27)
+[^crane]: `rust-flake` uses [crane](https://crane.dev/) directly, which is known to be stable. Whereas `nix-cargo-integration` uses `dream2nix` which is known to be unstable. See [here](https://matrix.to/#/!gcrYWdPsIUOFpXFDHB:matrix.org/$vJGlKFLKj4uRp-QkokK_0ISnnXHaXQ5tv7A_PcDYl7A?via=matrix.org&via=nixos.dev&via=goblin.sh) and [here](https://github.com/srid/rust-nix-template/pull/27)
