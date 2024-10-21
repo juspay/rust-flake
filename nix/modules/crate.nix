@@ -15,9 +15,11 @@
   options = {
     path = lib.mkOption {
       type = lib.types.path;
+      description = "The path to the crate folder";
     };
     cargoToml = lib.mkOption {
       type = lib.types.attrsOf lib.types.raw;
+      description = "The parsed Cargo.toml file";
       default = builtins.fromTOML (builtins.readFile (config.path + "/Cargo.toml"));
       defaultText = lib.literalExpression ''
         fromTOML (readFile (path + "/Cargo.toml"))
@@ -137,6 +139,7 @@
 
           packages = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
+            description = "All Nix packages for the Rust crate";
             default = lib.mergeAttrs
               (lib.optionalAttrs (lib.elem "crate" config.autoWire) {
                 ${name} = config.crane.outputs.drv.crate;
@@ -157,6 +160,7 @@
 
           checks = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.package;
+            description = "All Nix flake checks for the Rust crate";
             default = lib.optionalAttrs (lib.elem "clippy" config.autoWire && crane.clippy.enable) {
               "${name}-clippy" = config.crane.outputs.drv.clippy;
             };

@@ -30,6 +30,9 @@ in
 
             crane-lib = lib.mkOption {
               type = lib.types.lazyAttrsOf lib.types.raw;
+              description = ''
+                The value of `crane.mkLib pkgs` providing crane library functions
+              '';
               default = (rustFlakeInputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
               defaultText = lib.literalExpression "computed from `rust-flake.inputs.crane` and [`perSystem.rust-project.toolchain`](#opt-perSystem.rust-project.toolchain)";
             };
