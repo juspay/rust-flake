@@ -12,7 +12,7 @@ A simple flake module for Rust development, based on [Crane](https://crane.dev/)
 
 ## Examples
 
-- Single creates
+- Single crates
     - https://github.com/srid/rust-nix-template
     - https://github.com/juspay/nix-rs
 - Multi-crate workspace
