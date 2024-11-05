@@ -7,6 +7,7 @@
 
     in
     pkgs.mkShell {
+      name = "rust-flake-devshell";
       meta.description = "Rust development environment, created by rust-flake";
       shellHook = ''
         # For rust-analyzer 'hover' tooltips to work.
