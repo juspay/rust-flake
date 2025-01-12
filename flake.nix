@@ -5,7 +5,6 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.flake = false;
     crane.url = "github:ipetkov/crane";
-    crane.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { rust-overlay, crane, ... }:
     let
