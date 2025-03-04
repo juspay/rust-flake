@@ -3,8 +3,11 @@
     {
       options.crane.args = lib.mkOption {
         default = { };
-        type = lib.types.submodule {
-          freeformType = lib.types.attrsOf lib.types.raw;
+        type = lib.types.submoduleWith {
+          modules = [
+            { freeformType = lib.types.attrsOf lib.types.raw; }
+            rust-project.defaultCraneArgs
+          ];
         };
         description = ''
           Aguments to pass to crane's `buildPackage` and `buildDepOnly`

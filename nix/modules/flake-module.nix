@@ -62,6 +62,16 @@ in
               default = null;
             };
 
+            defaultCraneArgs = lib.mkOption {
+              default = { };
+              type = lib.types.submodule {
+                freeformType = lib.types.attrsOf lib.types.raw;
+              };
+              description = ''
+                Default arguments for `config.rust-project.crates.<name>.crane.args`
+              '';
+            };
+
             src = lib.mkOption {
               type = lib.types.path;
               description = "Source directory for the rust-project package";
