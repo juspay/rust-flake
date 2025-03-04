@@ -12,6 +12,7 @@ in
         imports = [
           ./default-crates.nix
           ./devshell.nix
+          ./defaults.nix
         ];
         options = {
           # TODO: Multiple projects
