@@ -64,9 +64,7 @@ in
 
             defaultCraneArgs = lib.mkOption {
               default = { };
-              type = lib.types.submodule {
-                freeformType = lib.types.attrsOf lib.types.raw;
-              };
+              type = lib.types.deferredModule;
               description = ''
                 Default arguments for `config.rust-project.crates.<name>.crane.args`
               '';
