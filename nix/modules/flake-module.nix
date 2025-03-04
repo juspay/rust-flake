@@ -12,6 +12,7 @@ in
         imports = [
           ./default-crates.nix
           ./devshell.nix
+          ./defaults.nix
         ];
         options = {
           # TODO: Multiple projects
@@ -60,14 +61,6 @@ in
                 By default, nothing is automagically imported.
               '';
               default = null;
-            };
-
-            defaultCraneArgs = lib.mkOption {
-              default = { };
-              type = lib.types.deferredModule;
-              description = ''
-                Default arguments for `config.rust-project.crates.<name>.crane.args`
-              '';
             };
 
             src = lib.mkOption {

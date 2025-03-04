@@ -6,7 +6,7 @@
         type = lib.types.submoduleWith {
           modules = [
             { freeformType = lib.types.attrsOf lib.types.raw; }
-            rust-project.defaultCraneArgs
+            rust-project.defaults.perCrate.crane.args
           ];
         };
         description = ''
