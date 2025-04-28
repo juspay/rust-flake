@@ -4,7 +4,9 @@
 {
   rust-project.crates =
     let
-      inherit (config.rust-project) cargoToml src;
+      inherit (config.rust-project) cargoToml src globset;
+      expandGlobs = members: lib.fileset.toList (globset.lib.globs src members);
+      topCargoToml = cargoToml;
     in
     if lib.hasAttr "workspace" cargoToml
     then
@@ -14,7 +16,7 @@
           let
             path =
               lib.cleanSourceWith {
-                name = builtins.baseNameOf pathString;
+                name = if pathString == "." then topCargoToml.package.name else builtins.baseNameOf pathString;
                 src = "${src}/${pathString}";
                 # TODO(DRY): Consolidate with that of flake-module.nix
                 filter = path: type:
@@ -42,7 +44,7 @@
           }
         )
         { }
-        cargoToml.workspace.members
+        (expandGlobs cargoToml.workspace.members)
     else
     # Read single package crate from top-level Cargo.toml
       {
