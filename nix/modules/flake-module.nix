@@ -31,6 +31,11 @@ in
 
             globset = lib.mkOption {
               default = rustFlakeInputs.globset;
+              internal = true;
+              readOnly = true;
+              description = ''
+                Reference to the globset flake input.
+              '';
             };
 
             crane-lib = lib.mkOption {
@@ -41,7 +46,6 @@ in
               default = (rustFlakeInputs.crane.mkLib pkgs).overrideToolchain config.rust-project.toolchain;
               defaultText = lib.literalExpression "computed from `rust-flake.inputs.crane` and [`perSystem.rust-project.toolchain`](#opt-perSystem.rust-project.toolchain)";
             };
-
             toolchain = lib.mkOption {
               type = lib.types.package;
               description = "Rust toolchain to use for the rust-project package";
