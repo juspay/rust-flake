@@ -5,7 +5,6 @@
   rust-project.crates =
     let
       inherit (config.rust-project) cargoToml src globset;
-      expandGlobs = members: lib.fileset.toList (globset.lib.globs src members);
       topCargoToml = cargoToml;
     in
     if lib.hasAttr "workspace" cargoToml
@@ -44,7 +43,7 @@
           }
         )
         { }
-        (expandGlobs cargoToml.workspace.members)
+        (lib.fileset.toList (globset.lib.globs src cargoToml.workspace.members))
     else
     # Read single package crate from top-level Cargo.toml
       {
