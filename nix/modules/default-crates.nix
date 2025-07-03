@@ -5,7 +5,6 @@
   rust-project.crates =
     let
       inherit (config.rust-project) cargoToml src globset;
-      topCargoToml = cargoToml;
     in
     if lib.hasAttr "workspace" cargoToml
     then
@@ -15,16 +14,16 @@
           let
             path =
               lib.cleanSourceWith {
-                name = if pathString == "." then topCargoToml.package.name else builtins.baseNameOf pathString;
+                name = if pathString == "." then cargoToml.package.name else builtins.baseNameOf pathString;
                 src = "${src}/${pathString}";
                 # TODO(DRY): Consolidate with that of flake-module.nix
                 filter = path: type:
                   (config.rust-project.crateNixFile != null && lib.hasSuffix "/${config.rust-project.crateNixFile}" path) ||
                   (config.rust-project.crane-lib.filterCargoSources path type);
               };
-            cargoPath = "${path}/Cargo.toml";
-            cargoToml = builtins.fromTOML (builtins.readFile cargoPath);
-            name = cargoToml.package.name;
+            crateCargoPath = "${path}/Cargo.toml";
+            crateCargoToml = builtins.fromTOML (builtins.readFile crateCargoPath);
+            name = crateCargoToml.package.name;
             crateNixFilePath =
               if config.rust-project.crateNixFile == null
               then null
