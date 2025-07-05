@@ -1,0 +1,8 @@
+[package]
+name = "root"
+version = "0.1.0"
+edition = "2021"
+description = "Root binary demonstrating math-utils usage"
+
+[dependencies]
+math-utils = { workspace = true }
