@@ -1,3 +1,4 @@
 /.direnv
 /just-flake.just
 /.pre-commit-config.yaml
+result
