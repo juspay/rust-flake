@@ -26,7 +26,7 @@
         default = import' ./nix/modules/flake-module.nix { inherit rust-overlay crane globset; };
         nixpkgs = ./nix/modules/nixpkgs.nix;
       };
-      nixci.default =
+      om.ci.default =
         let
           overrideInputs = {
             rust-flake = ./.;
