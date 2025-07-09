@@ -47,7 +47,6 @@ fn main() {
         Err(e) => println!("Error in final step: {e}"),
     }
 
-    // Practical example: calculating compound interest
     println!("\nPractical Example - Simple Interest:");
     let principal = 1000.0;
     let rate = 0.05; // 5%
