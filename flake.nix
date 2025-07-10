@@ -36,7 +36,7 @@
           dev = { inherit overrideInputs; dir = "dev"; };
           single-crate = { inherit overrideInputs; dir = "./examples/single-crate"; };
           multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; };
-          multi-crate-glob = { inherit overrideInputs; dir = "./examples/multi-crate-glob"; };
+          leptos-trunk = { inherit overrideInputs; dir = "./examples/leptos-trunk"; };
         };
     };
 }

@@ -1,7 +1,2 @@
 [workspace]
-members = ["math-utils", "calculator", "root"]
-
-resolver = "2"
-
-[workspace.dependencies]
-math-utils = { path = "./math-utils" }
+members = ["crates/*"]

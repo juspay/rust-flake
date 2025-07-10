@@ -1,7 +1,0 @@
-[package]
-name = "math-utils"
-version = "0.1.0"
-edition = "2021"
-description = "A simple library for basic mathematical operations"
-
-[dependencies]

@@ -3,19 +3,19 @@
 version = 4
 
 [[package]]
-name = "calculator"
+name = "crate-a"
 version = "0.1.0"
 dependencies = [
- "math-utils",
+ "crate-b",
 ]
 
 [[package]]
-name = "math-utils"
-version = "0.1.0"
-
-[[package]]
-name = "root"
+name = "crate-b"
 version = "0.1.0"
 dependencies = [
- "math-utils",
+ "crate-c",
 ]
+
+[[package]]
+name = "crate-c"
+version = "0.1.0"

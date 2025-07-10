@@ -1,8 +1,0 @@
-[package]
-name = "calculator"
-version = "0.1.0"
-edition = "2021"
-description = "A simple CLI calculator using math-utils"
-
-[dependencies]
-math-utils = { workspace = true }

@@ -11,13 +11,20 @@
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
       imports = [
-        ./nix/modules/rust.nix
+        inputs.rust-flake.flakeModules.default
+        inputs.rust-flake.flakeModules.nixpkgs
       ];
-      perSystem = { self', ... }: {
-        devShells.default = self'.devShells.rust;
 
-        # nix run . -- 10 + 5
-        packages.default = self'.packages.calculator;
+      perSystem = { self', ... }: {
+        rust-project = {
+          crateNixFile = "crate.nix";
+          crates = {
+            crate-a.path = (inputs.self) + /crates/crate-a;
+          };
+        };
+
+        devShells.default = self'.devShells.rust;
+        packages.default = self'.packages.crate-a;
       };
     };
 }
