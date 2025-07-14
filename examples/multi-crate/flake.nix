@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    rust-flake.url = "path:../../."; # TODO: replace with url once <https://github.com/juspay/rust-flake/pull/40>
+    rust-flake.url = "github:juspay/rust-flake/pull/40/head"; # TODO: replace with url once <https://github.com/juspay/rust-flake/pull/40>
   };
 
   outputs = inputs:

@@ -94,14 +94,19 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "path": "../../.",
-        "type": "path"
+        "lastModified": 1752473678,
+        "narHash": "sha256-bQg6PwHBRc82ET8jGpnaieTwoguwCX17MNNKyznxEMc=",
+        "owner": "juspay",
+        "repo": "rust-flake",
+        "rev": "96b2d4817c41fcfada95ef71dc439fd0cd43c98c",
+        "type": "github"
       },
       "original": {
-        "path": "../../.",
-        "type": "path"
-      },
-      "parent": []
+        "owner": "juspay",
+        "ref": "pull/40/head",
+        "repo": "rust-flake",
+        "type": "github"
+      }
     },
     "rust-overlay": {
       "inputs": {
