@@ -84,8 +84,7 @@
           # Quick example on how to serve the app,
           # This is just an example, not useful for production environments
           serve-app = pkgs.writeShellScriptBin "serve-app" ''
-            cd ${my-app}
-            ${pkgs.live-server}/bin/live-server -p 8000
+            ${pkgs.python3Minimal}/bin/python3 -m http.server --directory ${my-app} 8000
           '';
         in
         {
