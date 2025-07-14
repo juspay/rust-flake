@@ -29,15 +29,6 @@ in
               });
             };
 
-            globset = lib.mkOption {
-              default = rustFlakeInputs.globset;
-              internal = true;
-              readOnly = true;
-              description = ''
-                Reference to the globset flake input.
-              '';
-            };
-
             crane-lib = lib.mkOption {
               type = lib.types.lazyAttrsOf lib.types.raw;
               description = ''
