@@ -16,13 +16,13 @@
         inputs.rust-flake.flakeModules.nixpkgs
       ];
 
-      perSystem = { self', config, ... }: {
+      perSystem = { self', ... }: {
         rust-project = {
           crateNixFile = "crate.nix";
         };
 
         devShells.default = self'.devShells.rust;
-        packages.default = config.rust-project.crates.crate-a.crane.outputs.drv.crate;
+        packages.default = self'.packages.crate-a;
       };
     };
 }

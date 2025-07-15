@@ -16,15 +16,9 @@
       ];
       perSystem = { pkgs, self', lib, config, ... }:
         let
-          rustToolchainFor =
-            p:
-            p.rust-bin.stable.latest.default.override {
-              # Set the build targets supported by the toolchain,
-              # wasm32-unknown-unknown is required for trunk
-              targets = [ "wasm32-unknown-unknown" ];
-            };
+          wasm32 = "wasm32-unknown-unknown";
+          craneLib = config.rust-project.crane-lib;
 
-          craneLib = config.rust-project.crane-lib.overrideToolchain rustToolchainFor;
           src = lib.cleanSourceWith {
             src = ./.; # The original, unfiltered source
             filter = path: type:
@@ -37,7 +31,7 @@
             inherit src;
             strictDeps = true;
             # We must force the target, otherwise cargo will attempt to use your native target
-            CARGO_BUILD_TARGET = "wasm32-unknown-unknown";
+            CARGO_BUILD_TARGET = wasm32;
 
             buildInputs =
               [
@@ -84,10 +78,15 @@
           # Quick example on how to serve the app,
           # This is just an example, not useful for production environments
           serve-app = pkgs.writeShellScriptBin "serve-app" ''
-            ${pkgs.python3Minimal}/bin/python3 -m http.server --directory ${my-app} 8000
+            ${lib.getExe pkgs.miniserve} -p 8000 --index index.html ${my-app}
           '';
         in
         {
+          rust-project.toolchain = pkgs.rust-bin.stable.latest.default.override {
+            # Set the build targets supported by the toolchain,
+            # wasm32-unknown-unknown is required for trunk
+            targets = [ wasm32 ];
+          };
           packages.default = my-app;
           apps.default = {
             type = "app";
