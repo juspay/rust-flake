@@ -4,7 +4,7 @@
 {
   rust-project.crates =
     let
-      inherit (config.rust-project) cargoToml src;
+      inherit (config.rust-project) cargoToml src globset;
     in
     if lib.hasAttr "workspace" cargoToml
     then
@@ -14,16 +14,16 @@
           let
             path =
               lib.cleanSourceWith {
-                name = builtins.baseNameOf pathString;
+                name = if pathString == "." then cargoToml.package.name else builtins.baseNameOf pathString; # "." maps to root package
                 src = "${src}/${pathString}";
                 # TODO(DRY): Consolidate with that of flake-module.nix
                 filter = path: type:
                   (config.rust-project.crateNixFile != null && lib.hasSuffix "/${config.rust-project.crateNixFile}" path) ||
                   (config.rust-project.crane-lib.filterCargoSources path type);
               };
-            cargoPath = "${path}/Cargo.toml";
-            cargoToml = builtins.fromTOML (builtins.readFile cargoPath);
-            name = cargoToml.package.name;
+            crateCargoPath = "${path}/Cargo.toml";
+            crateCargoToml = builtins.fromTOML (builtins.readFile crateCargoPath);
+            name = crateCargoToml.package.name;
             crateNixFilePath =
               if config.rust-project.crateNixFile == null
               then null
@@ -42,36 +42,7 @@
           }
         )
         { }
-        (
-          # TODO: Handle advance globs if encountered, this should handle most cases.
-          let
-            # Simple approach: find all directories with Cargo.toml
-            findWorkspaceDirs = members:
-              lib.concatMap
-                (member:
-                  if lib.hasSuffix "/*" member then
-                  # Handle glob patterns like "crates/*"
-                    let
-                      baseDir = lib.removeSuffix "/*" member;
-                      fullBaseDir = "${src}/${baseDir}";
-                    in
-                    if lib.pathIsDirectory fullBaseDir then
-                      map (name: "${baseDir}/${name}")
-                        (lib.filter
-                          (name: lib.pathIsRegularFile "${fullBaseDir}/${name}/Cargo.toml")
-                          (builtins.attrNames (builtins.readDir fullBaseDir)))
-                    else [ ]
-                  else if member == "." then
-                  # Handle root workspace
-                    if lib.pathIsRegularFile "${src}/Cargo.toml" then [ "." ] else [ ]
-                  else
-                  # Handle explicit paths
-                    if lib.pathIsRegularFile "${src}/${member}/Cargo.toml" then [ member ] else [ ]
-                )
-                members;
-          in
-          findWorkspaceDirs cargoToml.workspace.members
-        )
+        (lib.fileset.toList (globset.lib.globs src cargoToml.workspace.members))
     else
     # Read single package crate from top-level Cargo.toml
       {
