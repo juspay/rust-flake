@@ -1,0 +1,8 @@
+[package]
+name = "single-crate"
+version = "0.1.0"
+edition = "2021"
+description = "A simple Hello World example for rust-flake"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }

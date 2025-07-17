@@ -1,0 +1,8 @@
+[package]
+name = "crate-a"
+version = "0.1.0"
+edition = "2024"
+description = "A crate that depends on crate-b"
+
+[dependencies]
+crate-b = { path = "../crate-b" }

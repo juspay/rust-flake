@@ -34,6 +34,8 @@
         in
         {
           dev = { inherit overrideInputs; dir = "dev"; };
+          single-crate = { inherit overrideInputs; dir = "./examples/single-crate"; };
+          # multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; }; TODO: Uncomment after merger of #40
         };
     };
 }
