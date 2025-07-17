@@ -35,8 +35,7 @@
         {
           dev = { inherit overrideInputs; dir = "dev"; };
           single-crate = { inherit overrideInputs; dir = "./examples/single-crate"; };
-          # multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; }; TODO: Uncommend after merger of #40
-          leptos-trunk = { inherit overrideInputs; dir = "./examples/leptos-trunk"; };
+          # multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; }; TODO: Uncomment after merger of #40
         };
     };
 }
