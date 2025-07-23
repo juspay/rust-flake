@@ -1,36 +1,11 @@
-{ config, lib, ... }:
+{ pkgs, config, lib, ... }:
 
 # Define a default for `rust-project.crates` by reading Cargo.toml files
 {
   rust-project.crates =
     let
       inherit (config.rust-project) cargoToml src;
-
-      # TODO: Handle advanced globs if encountered, this should handle most cases.
-      # Simple approach: find all directories with Cargo.toml
-      findCrates = members:
-        lib.concatMap
-          (member:
-            if lib.hasSuffix "/*" member then
-            # Handle glob patterns like "crates/*"
-              let
-                baseDir = lib.removeSuffix "/*" member;
-                fullBaseDir = "${src}/${baseDir}";
-              in
-              if lib.pathIsDirectory fullBaseDir then
-                map (name: "${baseDir}/${name}")
-                  (lib.filter
-                    (name: lib.pathIsRegularFile "${fullBaseDir}/${name}/Cargo.toml")
-                    (builtins.attrNames (builtins.readDir fullBaseDir)))
-              else [ ]
-            else if member == "." then
-            # Handle root workspace
-              if lib.pathIsRegularFile "${src}/Cargo.toml" then [ "." ] else [ ]
-            else
-            # Handle explicit paths
-              if lib.pathIsRegularFile "${src}/${member}/Cargo.toml" then [ member ] else [ ]
-          )
-          members;
+      findCrates = pkgs.callPackage ./../crate-parser { };
     in
     if lib.hasAttr "workspace" cargoToml
     then
@@ -68,7 +43,7 @@
           }
         )
         { }
-        (findCrates cargoToml.workspace.members)
+        (findCrates cargoToml.workspace.members src)
     else
     # Read single package crate from top-level Cargo.toml
       {

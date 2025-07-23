@@ -30,6 +30,16 @@
         in
         {
           dev = { inherit overrideInputs; dir = "dev"; };
+
+          # Tests
+          crate-parser-test =
+            let
+              crate-parser = ./nix/crate-parser;
+            in
+            {
+              dir = "./nix/crate-parser/test";
+              overrideInputs = { inherit crate-parser; };
+            };
         };
     };
 }
