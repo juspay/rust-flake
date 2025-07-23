@@ -2,10 +2,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    crate-parser = {
-      url = ../.;
-      flake = false;
-    }; # Overriden by omci (see top-level flake.nix)
+    crate-parser = { flake = false; }; # Overriden by omci (see top-level flake.nix)
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
