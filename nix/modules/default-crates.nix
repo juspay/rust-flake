@@ -5,7 +5,7 @@
   rust-project.crates =
     let
       inherit (config.rust-project) cargoToml src;
-      findCrates = pkgs.callPackage ./../crate-parser { };
+      inherit (pkgs.callPackage ./../crate-parser { }) findCrates;
     in
     if lib.hasAttr "workspace" cargoToml
     then

@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> { }, lib ? pkgs.lib, ... }:
 let
-  findCrates = pkgs.callPackage ./. { };
+  inherit (pkgs.callPackage ./. { }) findCrates;
 
   cargoMembersTest = {
     testStar = {

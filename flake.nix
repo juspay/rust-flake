@@ -32,17 +32,13 @@
           dev = { inherit overrideInputs; dir = "dev"; };
 
           # Tests
-          crate-parser-test =
-            let
-              crate-parser = ./nix/crate-parser;
-            in
-            {
-              dir = "./nix/crate-parser/test";
-              overrideInputs = { inherit crate-parser; };
-            };
+          crate-parser-test = {
+            dir = "./nix/crate-parser/test";
+            overrideInputs = { crate-parser = ./nix/crate-parser; };
+          };
 
           single-crate = { inherit overrideInputs; dir = "./examples/single-crate"; };
-          # multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; }; TODO: Uncomment after merger of #40
+          multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; };
         };
     };
 }
