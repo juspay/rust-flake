@@ -5,12 +5,8 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
     crane.url = "github:ipetkov/crane";
-    globset = {
-      url = "github:pdtpartners/globset";
-      inputs.nixpkgs-lib.follows = "nixpkgs";
-    };
   };
-  outputs = { rust-overlay, crane, globset, ... }:
+  outputs = { rust-overlay, crane, ... }:
     let
       # Preserve name and key of the module file for dedup and error message locations
       import' =
@@ -23,7 +19,7 @@
     in
     {
       flakeModules = {
-        default = import' ./nix/modules/flake-module.nix { inherit rust-overlay crane globset; };
+        default = import' ./nix/modules/flake-module.nix { inherit rust-overlay crane; };
         nixpkgs = ./nix/modules/nixpkgs.nix;
       };
       om.ci.default =
@@ -34,8 +30,15 @@
         in
         {
           dev = { inherit overrideInputs; dir = "dev"; };
+
+          # Tests
+          crate-parser-test = {
+            dir = "./nix/crate-parser/test";
+            overrideInputs = { crate-parser = ./nix/crate-parser; };
+          };
+
           single-crate = { inherit overrideInputs; dir = "./examples/single-crate"; };
-          # multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; }; TODO: Uncomment after merger of #40
+          multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; };
         };
     };
 }

@@ -1,10 +1,11 @@
-{ config, lib, ... }:
+{ pkgs, config, lib, ... }:
 
 # Define a default for `rust-project.crates` by reading Cargo.toml files
 {
   rust-project.crates =
     let
-      inherit (config.rust-project) cargoToml src globset;
+      inherit (config.rust-project) cargoToml src;
+      inherit (pkgs.callPackage ./../crate-parser { }) findCrates;
     in
     if lib.hasAttr "workspace" cargoToml
     then
@@ -14,16 +15,16 @@
           let
             path =
               lib.cleanSourceWith {
-                name = if pathString == "." then cargoToml.package.name else builtins.baseNameOf pathString; # "." maps to root package
+                name = builtins.baseNameOf pathString;
                 src = "${src}/${pathString}";
                 # TODO(DRY): Consolidate with that of flake-module.nix
                 filter = path: type:
                   (config.rust-project.crateNixFile != null && lib.hasSuffix "/${config.rust-project.crateNixFile}" path) ||
                   (config.rust-project.crane-lib.filterCargoSources path type);
               };
-            crateCargoPath = "${path}/Cargo.toml";
-            crateCargoToml = builtins.fromTOML (builtins.readFile crateCargoPath);
-            name = crateCargoToml.package.name;
+            cargoPath = "${path}/Cargo.toml";
+            cargoToml = builtins.fromTOML (builtins.readFile cargoPath);
+            name = cargoToml.package.name;
             crateNixFilePath =
               if config.rust-project.crateNixFile == null
               then null
@@ -42,7 +43,7 @@
           }
         )
         { }
-        (lib.fileset.toList (globset.lib.globs src cargoToml.workspace.members))
+        (findCrates cargoToml.workspace.members src)
     else
     # Read single package crate from top-level Cargo.toml
       {

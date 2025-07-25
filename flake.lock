@@ -15,26 +15,6 @@
         "type": "github"
       }
     },
-    "globset": {
-      "inputs": {
-        "nixpkgs-lib": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1744379919,
-        "narHash": "sha256-ieaQegt7LdMDFweeHhRaUQFYyF0U3pWD/XiCvq5L5U8=",
-        "owner": "pdtpartners",
-        "repo": "globset",
-        "rev": "4e21c96ab1259b8cd864272f96a8891b589c8eda",
-        "type": "github"
-      },
-      "original": {
-        "owner": "pdtpartners",
-        "repo": "globset",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1751271578,
@@ -54,7 +34,6 @@
     "root": {
       "inputs": {
         "crane": "crane",
-        "globset": "globset",
         "nixpkgs": "nixpkgs",
         "rust-overlay": "rust-overlay"
       }
