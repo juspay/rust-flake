@@ -72,11 +72,11 @@
 
       outputs =
         let
-          inherit (rust-project) toolchain src crane-lib;
+          inherit (rust-project) src crane-lib;
           inherit (config) crane cargoToml;
 
           name = cargoToml.package.name;
-          version = cargoToml.package.version;
+          # version = cargoToml.package.version;
           description = cargoToml.package.description
             or (builtins.throw "Missing description in ${name}'s Cargo.toml");
 
@@ -85,7 +85,7 @@
           # option?
           craneBuild = rec {
             args = crane.args // {
-              inherit src version;
+              inherit src;
               pname = name;
               cargoExtraArgs = "-p ${name}";
               # glib-sys fails to build on linux without this
