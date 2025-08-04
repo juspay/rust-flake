@@ -76,7 +76,6 @@
           inherit (config) crane cargoToml;
 
           name = cargoToml.package.name;
-          # version = cargoToml.package.version;
           description = cargoToml.package.description
             or (builtins.throw "Missing description in ${name}'s Cargo.toml");
 
