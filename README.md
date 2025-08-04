@@ -4,12 +4,6 @@
 
 A simple flake module for Rust development, based on [Crane](https://crane.dev/). `rust-flake` is inspired by [`haskell-flake`](https://github.com/srid/haskell-flake).
 
-## Progress
-
-- [x] Simple module that works with single-crate projects
-- [x] Multi-crate workspaces
-- [ ] Tests
-
 ## Examples
 
 - Single crates
