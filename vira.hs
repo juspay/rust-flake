@@ -1,8 +1,7 @@
 -- CI configuration <https://vira.nixos.asia/>
 \ctx pipeline ->
-  let 
-    isMaster = ctx.branch == "main"
+  let isMain = ctx.branch == "main"
   in pipeline
-     { signoff.enable = True
-     , attic.enable = isMaster
-     }
+    { signoff.enable = True
+    , cache.url = if isMain then Just "https://cache.nixos.asia/oss" else Nothing
+    }
