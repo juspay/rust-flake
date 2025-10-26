@@ -22,23 +22,5 @@
         default = import' ./nix/modules/flake-module.nix { inherit rust-overlay crane; };
         nixpkgs = ./nix/modules/nixpkgs.nix;
       };
-      om.ci.default =
-        let
-          overrideInputs = {
-            rust-flake = ./.;
-          };
-        in
-        {
-          dev = { inherit overrideInputs; dir = "dev"; };
-
-          # Tests
-          crate-parser-test = {
-            dir = "./nix/crate-parser/test";
-            overrideInputs = { crate-parser = ./nix/crate-parser; };
-          };
-
-          single-crate = { inherit overrideInputs; dir = "./examples/single-crate"; };
-          multi-crate = { inherit overrideInputs; dir = "./examples/multi-crate"; };
-        };
     };
 }
