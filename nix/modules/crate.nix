@@ -56,7 +56,7 @@
             pkg-config
             makeWrapper
           ];
-          defaultText = lib.literalExample ''
+          defaultText = lib.literalExpression ''
             with pkgs; [ pkg-config makeWrapper ]
           '';
           description = "nativeBuildInputs for the cargo package";
@@ -166,7 +166,7 @@
             default = lib.optionalAttrs (lib.elem "clippy" config.autoWire && crane.clippy.enable) {
               "${name}-clippy" = config.crane.outputs.drv.clippy;
             };
-            defaultText = lib.literalExample ''
+            defaultText = lib.literalExpression ''
               optionalAttrs (elem "clippy" config.autoWire && crane.clippy.enable) {
                 "''${name}-clippy" = config.crane.outputs.drv.clippy;
               }
