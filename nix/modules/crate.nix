@@ -75,9 +75,10 @@
           inherit (rust-project) src crane-lib;
           inherit (config) crane cargoToml;
 
-          name = cargoToml.package.name;
-          description = cargoToml.package.description
-            or (builtins.throw "Missing description in ${name}'s Cargo.toml");
+          name = cargoToml.package.name or cargoToml.workspace.metadata.package-name;
+          description =
+            cargoToml.package.description or cargoToml.workspace.metadata.description
+              or (builtins.throw "Missing description in ${name}'s Cargo.toml");
 
           # Crane builder
           # NOTE: Is it worth exposing this entire attrset as a readOnly module
