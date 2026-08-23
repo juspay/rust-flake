@@ -4,7 +4,7 @@
 # Vira itself uses to build a flake), with the same input overrides, built for
 # x86_64-linux and aarch64-darwin (via the matrix). The Vira "signoff" check
 # is replaced by this workflow's own check runs across the matrix (one
-# `check (os, subflake)` per combination), and the build cache by
+# `devour-flake (os, subflake)` per combination), and the build cache by
 # `cache-nix-action` (store cache persisted across runs).
 name: ci
 
@@ -15,8 +15,8 @@ on:
   pull_request:
 
 jobs:
-  check:
-    name: "check (${{ matrix.os }}, ${{ matrix.flake.name }})"
+  devour-flake:
+    name: "devour-flake (${{ matrix.os }}, ${{ matrix.flake.name }})"
     strategy:
       fail-fast: false
       matrix:
