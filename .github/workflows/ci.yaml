@@ -1,0 +1,53 @@
+# CI, ported from vira.hs (Vira <https://vira.nixos.asia/>).
+#
+# Same coverage as before: the four flakes, with the same input overrides,
+# built for x86_64-linux and aarch64-darwin (via the matrix). The Vira
+# "signoff" check is replaced by this workflow's own check runs across the
+# matrix (`check (ubuntu-latest)`, `check (macos-latest)`), and the build
+# cache by `cache-nix-action` (store cache persisted across runs).
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # build.systems in the old vira.hs
+          - ubuntu-latest # x86_64-linux
+          - macos-latest  # aarch64-darwin
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      actions: write # cache-nix-action's purge: true requires it
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v34
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 5G
+          gc-max-store-size-macos: 5G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-last-accessed: 604800
+          purge-primary-key: never
+
+      - name: "check dev (treefmt + pre-commit)"
+        run: nix flake check -L ./dev --override-input rust-flake "path:$PWD" --no-write-lock-file
+
+      - name: "check nix/crate-parser"
+        run: nix flake check -L ./nix/crate-parser/test --override-input crate-parser "path:$PWD/nix/crate-parser" --no-write-lock-file
+
+      - name: "check examples/single-crate"
+        run: nix flake check -L ./examples/single-crate --override-input rust-flake "path:$PWD" --no-write-lock-file
+
+      - name: "check examples/multi-crate"
+        run: nix flake check -L ./examples/multi-crate --override-input rust-flake "path:$PWD" --no-write-lock-file
