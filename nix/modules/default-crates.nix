@@ -15,7 +15,7 @@
           let
             path =
               lib.cleanSourceWith {
-                name = builtins.baseNameOf pathString;
+                name = if baseNameOf pathString == "." then "root" else baseNameOf pathString;
                 src = "${src}/${pathString}";
                 # TODO(DRY): Consolidate with that of flake-module.nix
                 filter = path: type:
