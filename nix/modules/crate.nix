@@ -175,4 +175,14 @@
         };
     };
   };
+  config = {
+    crane.args =
+      let
+        version = config.cargoToml.package.version or null;
+      in
+        lib.mkIf ( builtins.isString version )
+          {
+            version = lib.mkDefault version;
+          };
+  };
 }
